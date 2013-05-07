@@ -355,27 +355,6 @@ abstract class UniqueQueue implements DrupalQueueInterface {
   public abstract function itemsLeft($min_priority = NULL);
 
   /**
-   * Deletes an item from the queue.
-   *
-   * Implementing functions can assume this item has been completed and is
-   * ready to be dequeued.
-   *
-   * @param stdClass $queue_object The queue object as returned by claimItem().
-   *
-   * @return boolean TRUE if the item is removed, otherwise FALSE.
-   */
-  public abstract function deleteItem($queue_object);
-
-  /**
-   * Deletes all the items from the queue.
-   *
-   * Implementing functions should wipe all items from the queue.
-   *
-   * @return boolean TRUE if all items were removed, otherwise FALSE.
-   */
-  public abstract function deleteQueue();
-
-  /**
    * Creates a valid unique token for the queue based on a string.
    *
    * @param string $unique_token The unique token as determined by
