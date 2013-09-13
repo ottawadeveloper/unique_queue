@@ -131,6 +131,18 @@ class DBUniqueQueue extends UniqueQueue {
     );
     return drupal_write_record('unique_queue_items', $record) !== FALSE;
   }
+  
+  /**
+   * Handles the occasional case where a queue item needs to be updated.
+   * 
+   * @param stdClass $queueItem The queue item to update
+   * @return boolean The result of the write operation.
+   */
+  protected function updateQueueItem(stdClass $queueItem) {
+    return drupal_write_record('unique_queue_items', $queueItem, array(
+      'item_id'
+    )) !== FALSE;
+  }
 
   /**
    * Updates the priority of an existing item in the queue.

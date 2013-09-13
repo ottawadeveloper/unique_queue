@@ -244,7 +244,7 @@ abstract class UniqueQueue implements DrupalQueueInterface {
     $unique_token = $this->buildUniqueToken($data, $unique_token);
     // fast return MISSING for null unique items to avoid having to call seek()
     // pointlessly.
-    if (empty($unique_token)) { return UNIQUE_QUEUE_MISSING; }
+    if (empty($unique_token)) { $status = UNIQUE_QUEUE_MISSING; }
     $status = $this->seek($unique_token, $priority);
     switch ($status) {
       case UNIQUE_QUEUE_MISSING:
@@ -258,6 +258,52 @@ abstract class UniqueQueue implements DrupalQueueInterface {
         // do nothing - fall through to the return true below
     }
     return TRUE;
+  }
+  
+  /**
+   * Updates an item that has already been added to the queue. This is intended
+   * only for use by UniqueQueueFilter (when its method returns TRUE).
+   * 
+   * @param stdClass $queueItem The full queue item to resave.
+   */
+  protected abstract function updateQueueItem(stdClass $queueItem);
+  
+  /**
+   * Uses a UniqueQueueFilter object to perform an action on some or all 
+   * queue items. The operation will have access to all queue methods and all
+   * data stored on the queue object. The filter is responsible for determining
+   * if the operation should take place.
+   * 
+   * @param UniqueQueueFilter $filter The filter object that examines the
+   * data object, decides whether or not to perform its action and then 
+   * takes that action.
+   */
+  public function performFilterOperation(UniqueQueueFilter $filter) {
+    $queueObjects = $this->listItems();
+    foreach ($queueObjects as $queueObject) {
+      $keys = array(
+        'queue_name' => $queueObject->queue_name,
+        'item_uuid' => $queueObject->item_uuid,
+        'item_id' => $queueObject->item_id, 
+      );
+      $opcode = $filter->handleOperation($queueObject);
+      // prevent handleOperation from overridding these keys
+      $queueObject->queue_name = $keys['queue_name'];
+      $queueObject->item_uuid = $keys['item_uuid'];
+      $queueObject->item_id = $keys['item_id'];
+      switch ($opcode) {
+        case UNIQUE_QUEUE_FILTER_OP_DELETE:
+          $this->deleteItem($queueObject);
+          break;
+        case UNIQUE_QUEUE_FILTER_OP_UPDATE:
+          $this->updateQueueItem($queueObject);
+          break;
+        case UNIQUE_QUEUE_FILTER_OP_NOOP:
+        default:
+          // do nothing (noop)
+          break;
+      }
+    }
   }
 
   /**
@@ -463,6 +509,19 @@ abstract class UniqueQueue implements DrupalQueueInterface {
    *     the same or greater than the new item.
    */
   protected abstract function seek($unique_token, $priority = 0);
+  
+  /**
+   * Checks to see if a unique token is present in the queue.
+   * 
+   * Will only work with explicit unique tokens (eg will not work for items
+   * that simply serialize themselves to generate unique IDs).
+   * 
+   * @param mixed $unique_token The unique token to search for
+   * @return boolean TRUE if it exists in the queue, otherwise FALSE.
+   */
+  public function itemInQueue($unique_token) {
+    return $this->seek($this->buildUniqueToken(NULL, $unique_token)) !== UNIQUE_QUEUE_MISSING;
+  }
 
   /**
    * Adds an item to the queue.

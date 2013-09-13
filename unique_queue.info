@@ -3,7 +3,9 @@ description = "Provides an extended API for unique queues and prioritized
 queues."
 core = 7.x
 
+files[] = interfaces/UniqueQueueFilter.inc
 files[] = classes/UniqueQueue.inc
 files[] = classes/DBUniqueQueue.inc
-files[] = tests/unique_queue.test
+files[] = classes/filters/UniqueQueuePropertyDeleteFilter.inc
 
+files[] = tests/unique_queue.test
