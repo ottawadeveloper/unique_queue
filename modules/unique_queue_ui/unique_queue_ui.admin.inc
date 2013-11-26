@@ -1,4 +1,8 @@
 <?php
+/**
+ * @file
+ * Contains admin page callbacks for the Unique Queue UI module.
+ */
 
 /**
  * Page callback for listing all unique queues.

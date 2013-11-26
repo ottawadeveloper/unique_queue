@@ -1,4 +1,8 @@
 <?php
+/**
+ * @file
+ * Contains the UniqueQueueFilter interface definition.
+ */
 
 /**
  * UniqueQueueFilter::handleOperation() should return this code (or no code)
@@ -32,10 +36,14 @@ interface UniqueQueueFilter {
    * determines what the queue will do with the item after you're done with it
    * (nothing is the default, can also update or delete).
    * 
-   * @param stdClass $queueItem The queue item that is currently being 
-   * examined.
+   * @param stdClass $queueItem 
+   *   The queue item that is currently being examined.
    * 
-   * @return int Returns an op code for what the queue should do.
+   * @return int 
+   *   Returns an op code for what the queue should do:
+   *   - UNIQUE_QUEUE_FILTER_OP_NOOP: Nothing should happen.
+   *   - UNIQUE_QUEUE_FILTER_OP_UPDATE: Update the object in the queue.
+   *   - UNIQUE_QUEUE_FILTER_OP_DELETE: Delete the object.
    */
   function handleOperation(stdClass &$queueItem);
   
