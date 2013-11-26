@@ -1,4 +1,8 @@
 <?php
+/**
+ * @file
+ * Contains hook implementations for the Unique Queue module.
+ */
 
 /**
  * Implements hook_cron().

@@ -1,15 +1,20 @@
 <?php
+/**
+ * @file
+ * Contains examples of hook implementations.
+ */
 
 /**
  * Retrieves a list of unique queue objects registered with this module.
  *
  * This is used for clearing locks and managing queues through a UI.
  *
- * @return An array of queue items in the format:
- * - classname:
- *   - queue_name_1
- *   - queue_name_2
- *   - queue_name_3
+ * @return array
+ *   An array of queue items in the format:
+ *   - classname:
+ *     - queue_name_1
+ *     - queue_name_2
+ *     - queue_name_3
  */
 function hook_unique_queue_list() {
 
