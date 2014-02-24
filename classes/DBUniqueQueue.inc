@@ -318,6 +318,7 @@ class DBUniqueQueue extends UniqueQueue {
           'lock_expires',
           'created',
           'item_id',
+          'queue_name',
         ))
         ->condition('queue_name', $this->queue_name)
         ->orderBy('priority', 'DESC')
