@@ -98,7 +98,7 @@ function _unique_queue_schema_items() {
       ),
       'data' => array(
         'type' => 'text',
-        'size' => 'big',
+        'size' => 'medium',
         'not null' => TRUE,
         'serialize' => FALSE,
         'binary' => FALSE,
@@ -131,4 +131,16 @@ function _unique_queue_schema_items() {
     ),
     'description' => 'List of items in the queue',
   );
+}
+
+/**
+ * Downgrade the size of the data column to medium from big.
+ */
+function unique_queue_update_7101() {
+  db_change_field('unique_queue_items', 'data', 'data', array('type' => 'text',
+    'size' => 'medium',
+    'not null' => TRUE,
+    'serialize' => FALSE,
+    'binary' => FALSE,
+  ));
 }
